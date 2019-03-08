@@ -194,6 +194,7 @@ class Logger(object):
 
         :param data: Something pickle'able.
         """
+        return
         file_name = osp.join(self._snapshot_dir, file_name)
         if mode == 'joblib':
             import joblib
@@ -281,6 +282,7 @@ class Logger(object):
 
     def save_itr_params(self, itr, params):
         if self._snapshot_dir:
+            return
             if self._snapshot_mode == 'all':
                 file_name = osp.join(self._snapshot_dir, 'itr_%d.pkl' % itr)
                 pickle.dump(params, open(file_name, "wb"))

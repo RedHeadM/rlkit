@@ -4,7 +4,6 @@ Run PyTorch Soft Actor Critic on HalfCheetahEnv.
 NOTE: You need PyTorch 0.3 or more (to have torch.distributions)
 """
 import numpy as np
-from gym.envs.mujoco import HalfCheetahEnv
 
 import rlkit.torch.pytorch_util as ptu
 from rlkit.envs.wrappers import NormalizedBoxEnv
@@ -12,13 +11,19 @@ from rlkit.launchers.launcher_util import setup_logger
 from rlkit.torch.sac.policies import TanhGaussianPolicy
 from rlkit.torch.sac.sac import SoftActorCritic
 from rlkit.torch.networks import FlattenMlp
-
+from bulletrobotgym.utils.blogging import log, suppress_logging,set_log_file
+from bulletrobotgym.utils.comm import makedir_if_not_exists,suppress_stdout
+from gym.envs.registration import register
+register(
+    id='tcn-push-v0',
+    entry_point='bulletrobotgym.env_tcn:TcnPush',
+)
 
 def experiment(variant):
-    env = NormalizedBoxEnv(HalfCheetahEnv())
+    # env = NormalizedBoxEnv(HalfCheetahEnv())
     # Or for a specific version:
-    # import gym
-    # env = NormalizedBoxEnv(gym.make('HalfCheetah-v1'))
+    import gym
+    env = NormalizedBoxEnv(gym.make('tcn-push-v0'))
 
     obs_dim = int(np.prod(env.observation_space.shape))
     action_dim = int(np.prod(env.action_space.shape))
@@ -69,6 +74,6 @@ if __name__ == "__main__":
         ),
         net_size=300,
     )
-    setup_logger('name-of-experiment', variant=variant)
-    # ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
+    setup_logger('tcn-rec', variant=variant)
+    ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
     experiment(variant)
